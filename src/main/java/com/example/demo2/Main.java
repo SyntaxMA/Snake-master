@@ -37,8 +37,8 @@ public class Main extends Application implements Serializable{
         primaryStage.setTitle("Snake");
         label = new Label("");
 
-        player1 = new Snake(50, 50, "RIGHT");
-        player2 = new Snake(100, 100, "LEFT");
+        player1 = new Snake(30, 30, "RIGHT");
+        player2 = new Snake(20 * block_size - 30, 20 * block_size - 30, "LEFT");
 
         apple = new Snake_Segment(0, 0);
         apple.randomPos();
@@ -60,6 +60,7 @@ public class Main extends Application implements Serializable{
             System.out.println("Conectando el server");
             isServer = false;
         }
+
         catch (Exception e)
         {
             //Si no hay una sala creada, haces de server...
@@ -172,7 +173,7 @@ public class Main extends Application implements Serializable{
                         game_info.player2 = player2;
                         game_info.apple = apple;
 
-                        //Informa al cliente que esta pasando y quien ha ganado
+                        //Actualizar informacion al host
                         try {
                             objectOutputStream.reset();
                             objectOutputStream.writeObject(game_info);
@@ -183,7 +184,7 @@ public class Main extends Application implements Serializable{
 
                     else
                     {
-                        //Informar cual es la direccion de la serpiente del jugador 2
+                        //Actualizar informacion al jugador 2
                         try {
                             objectOutputStream.reset();
                             objectOutputStream.writeObject(player2.direction);
@@ -202,7 +203,7 @@ public class Main extends Application implements Serializable{
                         player2 = game_info.player2;
                         apple = game_info.apple;
                     }
-/*
+
                     if(player1.direction.equals("DRAW") || player2.direction.equals("DRAW"))
                     {
                         label.setText("¡EMPATE!");
@@ -220,7 +221,7 @@ public class Main extends Application implements Serializable{
                         label.setText("¡JUGADOR 2  HA GANADO LA PARTIDA!");
                         this.stop();
                     }
-*/
+
                     // Dibuja todos los elementos del juego
                     drawMap();
                     drawSnake(player1);
@@ -238,7 +239,7 @@ public class Main extends Application implements Serializable{
         StackPane stackPane = new StackPane();
         stackPane.getChildren().add(group);
         stackPane.getChildren().add(label);
-        Scene scene = new Scene(stackPane, block_size * 25, block_size * 25);
+        Scene scene = new Scene(stackPane, block_size * 20, block_size * 20);
 
         //Movimiento
         
@@ -277,6 +278,7 @@ public class Main extends Application implements Serializable{
         primaryStage.show();
     }
 
+    // Dibujar el tablero del juego
     public void drawMap()
     {
         int r = 0;
@@ -293,16 +295,18 @@ public class Main extends Application implements Serializable{
         }
     }
 
+    // Dibujar las serpientes con sus colores
     public void drawSnake(Snake player)
     {
         for(int i = 0; i < player.body.size(); i++)
         {
             if(player == player1) graphics_context.setFill(Color.GREEN);
-            else graphics_context.setFill(Color.BLUE);
+            else graphics_context.setFill(Color.DARKMAGENTA);
             graphics_context.fillRect(player.body.get(i).x, player.body.get(i).y, block_size, block_size);
         }
     }
 
+    // Dibujar la manzana
     public void drawApple()
     {
         graphics_context.setFill(Color.RED);
