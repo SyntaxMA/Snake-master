@@ -108,7 +108,7 @@ public class Main extends Application implements Serializable{
             {
                 if(frame == 30)
                 {
-                    //Serwer odbiera kierunek p2 i oblicza cala mape
+                    //El jugador 2 se comunica con el jugador 1 que hace de host
                     if(isServer)
                     {
                         try {
@@ -117,25 +117,25 @@ public class Main extends Application implements Serializable{
                             e.printStackTrace();
                         }
 
-                        //Aktualizacja polozenia dla kazdego segmentu gracza
+                        //Movimientos de serpiente y sus segmentos
                         player1.move();
                         player2.move();
 
-                        //Detekcja kolizji miedzy jablkiem a graczem1
+                        //Saber si la cabeza de la serpiente del player 1 toca con una manzana
                         if(player1.body.getFirst().x == apple.x && player1.body.getFirst().y == apple.y)
                         {
                             player1.createSegment();
                             apple.randomPos();
                         }
 
-                        //Detekcja kolizji miedzy jablkiem a graczem2
+                        //Saber si la cabeza de la serpiente del player 2 toca con una manzana
                         if(player2.body.getFirst().x == apple.x && player2.body.getFirst().y == apple.y)
                         {
                             player2.createSegment();
                             apple.randomPos();
                         }
 
-                        //sprawdzenie czy gracz koliduje z czyms
+                        //Comprobar colisiones
                         boolean player1_colliding;
                         player1_colliding = player1.checkColision();
                         if(!player1_colliding) player1_colliding = player1.checkColision(player2);
@@ -144,14 +144,15 @@ public class Main extends Application implements Serializable{
                         player2_colliding = player2.checkColision();
                         if(!player2_colliding) player2_colliding = player2.checkColision(player1);
 
-                        //Jesli jest kolizja to przeslimy kierunek jako informacje o tym kto wygral
+
+                        //Si los dos chocan entre ellos empate
                         if(player1_colliding && player2_colliding)
                         {
                             game_over = true;
                             player1.direction = "DRAW";
                             player2.direction = "DRAW";
                         }
-
+                        //Si el jugador 1 choca gana player 2
                         else if(player1_colliding)
                         {
                             game_over = true;
@@ -159,6 +160,7 @@ public class Main extends Application implements Serializable{
                             player2.direction = "P2";
                         }
 
+                        //Si el jugador 2 choca gana player 1
                         else if(player2_colliding)
                         {
                             game_over = true;
@@ -170,7 +172,7 @@ public class Main extends Application implements Serializable{
                         game_info.player2 = player2;
                         game_info.apple = apple;
 
-                        //Wyslanie informacji o grze do klienta
+                        //Informa al cliente que esta pasando y quien ha ganado
                         try {
                             objectOutputStream.reset();
                             objectOutputStream.writeObject(game_info);
@@ -181,7 +183,7 @@ public class Main extends Application implements Serializable{
 
                     else
                     {
-                        //Wyslanie kierunku weza
+                        //Informar cual es la direccion de la serpiente del jugador 2
                         try {
                             objectOutputStream.reset();
                             objectOutputStream.writeObject(player2.direction);
@@ -189,7 +191,7 @@ public class Main extends Application implements Serializable{
                             e.printStackTrace();
                         }
 
-                        //Pobranie wszystkich informacji o grze
+                        //Comprobar en cualquier momento la informacion de los jugadores y donde hay una manzana.
                         try {
                             game_info = (Game_Info) objectInputStream.readObject();
                         } catch (IOException | ClassNotFoundException e) {
@@ -219,15 +221,11 @@ public class Main extends Application implements Serializable{
                         this.stop();
                     }
 */
-                    //Wyczyszczenie mapy
+                    // Dibuja todos los elementos del juego
                     drawMap();
-
-                    //Rysowanie jablka
-                    drawApple();
-
-                    //Rysowanie wezy
                     drawSnake(player1);
                     drawSnake(player2);
+                    drawApple();
                 }
 
                 frame++;
