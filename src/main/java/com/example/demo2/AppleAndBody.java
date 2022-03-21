@@ -2,12 +2,12 @@ package com.example.demo2;
 
 import java.io.Serializable;
 
-public class Snake_Segment implements Serializable
+public class AppleAndBody implements Serializable
 {
     static int block_size = 30;
     public int x, y;
 
-    public Snake_Segment(int x, int y)
+    public AppleAndBody(int x, int y)
     {
         this.x = x;
         this.y = y;

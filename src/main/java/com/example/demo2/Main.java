@@ -2,20 +2,23 @@ package com.example.demo2;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import java.io.File;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Timer;
 
 public class Main extends Application implements Serializable{
 
@@ -35,7 +38,13 @@ public class Main extends Application implements Serializable{
     int vic_player1;
     int vic_player2;
 
-    private Snake_Segment apple;
+    String path = "src/main/resources/manzana_sound.wav";
+    Media media = new Media(new File(path).toURI().toString());
+    MediaPlayer mediaPlayer = new MediaPlayer(media);
+
+    Timer timer = new Timer();
+
+    private AppleAndBody apple;
 
     private boolean game_over = false;
 
@@ -50,7 +59,7 @@ public class Main extends Application implements Serializable{
         player1 = new Snake(30, 30, "RIGHT");
         player2 = new Snake(20 * block_size - 60, 20 * block_size - 60, "LEFT");
 
-        apple = new Snake_Segment(0, 0);
+        apple = new AppleAndBody(0, 0);
         apple.randomPos();
 
         game_info = new Game_Info(player1, player2, apple);
@@ -67,7 +76,7 @@ public class Main extends Application implements Serializable{
         {
             //Abrirá el socket para realizar la conexión
             socket = new Socket(InetAddress.getLocalHost(), 5555);
-            System.out.println("Conectando el server");
+            System.out.println("Conectando al host...");
             isServer = false;
         }
 
@@ -75,6 +84,7 @@ public class Main extends Application implements Serializable{
         {
             //Si no hay una sala creada, haces de server...
             ServerSocket server = new ServerSocket(5555);
+            System.out.println("Haciendo de host...");
             System.out.println("Esperando a otro jugador...");
             socket = server.accept();
             System.out.println("Se ha unido un jugador");
@@ -135,19 +145,22 @@ public class Main extends Application implements Serializable{
                         //Saber si la cabeza de la serpiente del player 1 toca con una manzana
                         if(player1.body.getFirst().x == apple.x && player1.body.getFirst().y == apple.y)
                         {
-
-
-
-                            System.out.println("end");
+                            mediaPlayer.setAutoPlay(true);
                             player1.createSegment();
                             apple.randomPos();
+                            mediaPlayer.play();
+                            mediaPlayer.stop();
+
                         }
 
                         //Saber si la cabeza de la serpiente del player 2 toca con una manzana
                         if(player2.body.getFirst().x == apple.x && player2.body.getFirst().y == apple.y)
                         {
+                            mediaPlayer.setAutoPlay(true);
                             player2.createSegment();
                             apple.randomPos();
+                            mediaPlayer.play();
+                            mediaPlayer.stop();
                         }
 
                         //Comprobar colisiones
@@ -316,7 +329,7 @@ public class Main extends Application implements Serializable{
     {
         {
             if(player == player1) graphics_context.setFill(Color.GREEN);
-            else graphics_context.setFill(Color.DARKMAGENTA);
+            else graphics_context.setFill(Color.MAGENTA);
             graphics_context.fillRect(player.body.getFirst().x, player.body.getFirst().y, block_size, block_size);
         }
     }
@@ -326,7 +339,7 @@ public class Main extends Application implements Serializable{
     {
         for(int i = 1; i < player.body.size(); i++)
         {
-            if(player == player1) graphics_context.setFill(Color.GREEN);
+            if(player == player1) graphics_context.setFill(Color.DARKGREEN);
             else graphics_context.setFill(Color.DARKMAGENTA);
             graphics_context.fillOval(player.body.get(i).x, player.body.get(i).y, block_size, block_size);
         }

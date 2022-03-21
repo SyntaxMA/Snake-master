@@ -7,13 +7,13 @@ public class Snake implements Serializable
 {
     static int block_size = 30;
 
-    LinkedList<Snake_Segment> body;
+    LinkedList<AppleAndBody> body;
     String direction;
 
     public Snake(int x, int y, String direction)
     {
         body = new LinkedList<>();
-        body.add(new Snake_Segment(x, y));
+        body.add(new AppleAndBody(x, y));
         this.direction = direction;
     }
 
@@ -53,11 +53,11 @@ public class Snake implements Serializable
 
         for(int i = body.size() - 1; i > 0; i--)
         {
-            Snake_Segment S = new Snake_Segment(body.get(i - 1).x, body.get(i - 1).y);
+            AppleAndBody S = new AppleAndBody(body.get(i - 1).x, body.get(i - 1).y);
             body.set(i, S);
         }
 
-        Snake_Segment S = new Snake_Segment(body.getFirst().x + dir_x, body.getFirst().y + dir_y);
+        AppleAndBody S = new AppleAndBody(body.getFirst().x + dir_x, body.getFirst().y + dir_y);
         body.set(0, S);
     }
 
@@ -95,7 +95,7 @@ public class Snake implements Serializable
             return;
         }
 
-        body.add(new Snake_Segment(body.getLast().x + dir_x, body.getLast().y + dir_y));
+        body.add(new AppleAndBody(body.getLast().x + dir_x, body.getLast().y + dir_y));
     }
 
     //Comprobacion de que te chocas a ti mismo
