@@ -2,6 +2,7 @@ package com.example.demo2;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -18,17 +19,26 @@ import java.net.Socket;
 
 public class Main extends Application implements Serializable{
 
+    // Tamaño de los cuadrados, hay que tener en cuenta que si un cubo mide 30 y el mapa es 20 x 20 será una pantalla de 600 x 600
     public static int block_size = 30;
+
     GraphicsContext graphics_context;
     private ObjectInputStream objectInputStream = null;
     private ObjectOutputStream objectOutputStream = null;
     private boolean isServer;
+
+    // Preparamos sockets y a los dos jugadoress que se van a enfrentar entre sí y la manzana.
     Socket socket;
+    private Game_Info game_info;
     private Snake player1;
     private Snake player2;
+    int vic_player1;
+    int vic_player2;
+
     private Snake_Segment apple;
-    private Game_Info game_info;
+
     private boolean game_over = false;
+
     private Label label;
 
     @Override
@@ -38,7 +48,7 @@ public class Main extends Application implements Serializable{
         label = new Label("");
 
         player1 = new Snake(30, 30, "RIGHT");
-        player2 = new Snake(20 * block_size - 30, 20 * block_size - 30, "LEFT");
+        player2 = new Snake(20 * block_size - 60, 20 * block_size - 60, "LEFT");
 
         apple = new Snake_Segment(0, 0);
         apple.randomPos();
@@ -125,6 +135,10 @@ public class Main extends Application implements Serializable{
                         //Saber si la cabeza de la serpiente del player 1 toca con una manzana
                         if(player1.body.getFirst().x == apple.x && player1.body.getFirst().y == apple.y)
                         {
+
+
+
+                            System.out.println("end");
                             player1.createSegment();
                             apple.randomPos();
                         }
@@ -224,8 +238,10 @@ public class Main extends Application implements Serializable{
 
                     // Dibuja todos los elementos del juego
                     drawMap();
-                    drawSnake(player1);
-                    drawSnake(player2);
+                    drawCabezaSnake(player1);
+                    drawCuerpoSnake(player1);
+                    drawCabezaSnake(player2);
+                    drawCuerpoSnake(player2);
                     drawApple();
                 }
 
@@ -241,7 +257,7 @@ public class Main extends Application implements Serializable{
         stackPane.getChildren().add(label);
         Scene scene = new Scene(stackPane, block_size * 20, block_size * 20);
 
-        //Movimiento
+        //Movimiento de las serpientes
         
         scene.setOnKeyPressed(
                 keyEvent -> {
@@ -295,14 +311,24 @@ public class Main extends Application implements Serializable{
         }
     }
 
-    // Dibujar las serpientes con sus colores
-    public void drawSnake(Snake player)
+    // Dibujar las cabezas de serpientes con sus colores con un rectangulo
+    public void drawCabezaSnake(Snake player)
     {
-        for(int i = 0; i < player.body.size(); i++)
         {
             if(player == player1) graphics_context.setFill(Color.GREEN);
             else graphics_context.setFill(Color.DARKMAGENTA);
-            graphics_context.fillRect(player.body.get(i).x, player.body.get(i).y, block_size, block_size);
+            graphics_context.fillRect(player.body.getFirst().x, player.body.getFirst().y, block_size, block_size);
+        }
+    }
+
+    // Dibujar el cuerpo de las serpientes con sus colores con un ovalo
+    public void drawCuerpoSnake(Snake player)
+    {
+        for(int i = 1; i < player.body.size(); i++)
+        {
+            if(player == player1) graphics_context.setFill(Color.GREEN);
+            else graphics_context.setFill(Color.DARKMAGENTA);
+            graphics_context.fillOval(player.body.get(i).x, player.body.get(i).y, block_size, block_size);
         }
     }
 

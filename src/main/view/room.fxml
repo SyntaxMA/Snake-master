@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <VBox fx:id="vboxMP" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="20.0" style="-fx-background-color: #75d764;">
+            <padding>
+                <Insets left="80.0" right="80.0" />
+            </padding>
+            <children>
+                <Label alignment="CENTER" prefHeight="50.0" prefWidth="400.0" text="Snake Battle Royale" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="30.0" />
+                    </font>
+               <VBox.margin>
+                  <Insets top="50.0" />
+               </VBox.margin>
+                </Label>
+                <Separator prefHeight="65.0" prefWidth="440.0" visible="false" />
+                <Button fx:id="buttonC" mnemonicParsing="false" prefHeight="35.0" prefWidth="200.0" text="Create new room">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                </Button>
+                <Button fx:id="buttonJ" mnemonicParsing="false" prefHeight="35.0" prefWidth="200.0" text="Join existing room">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                </Button>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
