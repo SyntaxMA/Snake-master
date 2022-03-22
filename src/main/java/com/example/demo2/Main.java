@@ -18,7 +18,6 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Timer;
 
 public class Main extends Application implements Serializable{
 
@@ -38,22 +37,43 @@ public class Main extends Application implements Serializable{
     int vic_player1;
     int vic_player2;
 
-    String path = "src/main/resources/manzana_sound.wav";
-    Media media = new Media(new File(path).toURI().toString());
-    MediaPlayer mediaPlayer = new MediaPlayer(media);
-
-    Timer timer = new Timer();
-
     private AppleAndBody apple;
 
     private boolean game_over = false;
 
     private Label label;
 
+    // MUSICAS
+
+    //Sonido de manzana
+    String appleffect = "src/main/resources/manzana_sound.wav";
+    Media mediaapple = new Media(new File(appleffect).toURI().toString());
+    MediaPlayer applePlayer = new MediaPlayer(mediaapple);
+
+    String firstsound = "src/main/resources/primer_sound.wav";
+    Media mediafirst = new Media(new File(firstsound).toURI().toString());
+    MediaPlayer firstPlayer = new MediaPlayer(mediafirst);
+
+    String secondsound = "src/main/resources/primer_sound.wav";
+    Media mediasecond = new Media(new File(secondsound).toURI().toString());
+    MediaPlayer secondPlayer = new MediaPlayer(mediasecond);
+
+    String drawsound = "src/main/resources/empatesound.wav";
+    Media mediadraw = new Media(new File(drawsound).toURI().toString());
+    MediaPlayer drawPlayer = new MediaPlayer(mediadraw);
+
+    String player1sound = "src/main/resources/player-1-wins.mp3";
+    Media mediaplayer1 = new Media(new File(player1sound).toURI().toString());
+    MediaPlayer win1Player = new MediaPlayer(mediaplayer1);
+
+    String player2sound = "src/main/resources/player-2-wins.mp3";
+    Media mediaplayer2 = new Media(new File(player2sound).toURI().toString());
+    MediaPlayer win2Player = new MediaPlayer(mediaplayer2);
+
     @Override
     public void start(Stage primaryStage) throws Exception
     {
-        primaryStage.setTitle("Snake");
+        primaryStage.setTitle("Snake Room");
         label = new Label("");
 
         player1 = new Snake(30, 30, "RIGHT");
@@ -63,6 +83,13 @@ public class Main extends Application implements Serializable{
         apple.randomPos();
 
         game_info = new Game_Info(player1, player2, apple);
+
+        StackPane root = new StackPane();
+        root.setId("stack-pane");
+        Scene scene = new Scene(root, 600, 600);
+        //scene.getStylesheets().add(String.valueOf(this.getClass().getResource("style.css")));
+        primaryStage.setScene(scene);
+        primaryStage.show();
 
         //Tamaño del mapa donde se va jugar
         Canvas canvas = new Canvas();
@@ -127,6 +154,18 @@ public class Main extends Application implements Serializable{
 
             public void handle(long currentNanoTime)
             {
+                firstPlayer.play();
+
+                /*
+                if (player1.body.size() <= 3) {
+                    firstPlayer.stop();
+                    secondPlayer.play();
+                }
+                if (player2.body.size() <= 3) {
+                    firstPlayer.stop();
+                    secondPlayer.play();
+                }
+                */
                 if(frame == 30)
                 {
                     //El jugador 2 se comunica con el jugador 1 que hace de host
@@ -145,22 +184,23 @@ public class Main extends Application implements Serializable{
                         //Saber si la cabeza de la serpiente del player 1 toca con una manzana
                         if(player1.body.getFirst().x == apple.x && player1.body.getFirst().y == apple.y)
                         {
-                            mediaPlayer.setAutoPlay(true);
+                            applePlayer.setAutoPlay(true);
                             player1.createSegment();
                             apple.randomPos();
-                            mediaPlayer.play();
-                            mediaPlayer.stop();
+                            applePlayer.play();
+                            applePlayer.stop();
 
                         }
 
                         //Saber si la cabeza de la serpiente del player 2 toca con una manzana
                         if(player2.body.getFirst().x == apple.x && player2.body.getFirst().y == apple.y)
                         {
-                            mediaPlayer.setAutoPlay(true);
+                            applePlayer.setAutoPlay(true);
                             player2.createSegment();
                             apple.randomPos();
-                            mediaPlayer.play();
-                            mediaPlayer.stop();
+                            applePlayer.play();
+                            applePlayer.stop();
+
                         }
 
                         //Comprobar colisiones
@@ -233,18 +273,24 @@ public class Main extends Application implements Serializable{
 
                     if(player1.direction.equals("DRAW") || player2.direction.equals("DRAW"))
                     {
+                        firstPlayer.stop();
+                        drawPlayer.play();
                         label.setText("¡EMPATE!");
                         this.stop();
                     }
 
                     else if(player1.direction.equals("P1") || player2.direction.equals("P1"))
                     {
+                        firstPlayer.stop();
+                        win1Player.play();
                         label.setText("¡JUGADOR 1 HA GANADO LA PARTIDA!");
                         this.stop();
                     }
 
                     else if(player1.direction.equals("P2") || player2.direction.equals("P2"))
                     {
+                        firstPlayer.stop();
+                        win2Player.play();
                         label.setText("¡JUGADOR 2  HA GANADO LA PARTIDA!");
                         this.stop();
                     }
@@ -268,11 +314,11 @@ public class Main extends Application implements Serializable{
         StackPane stackPane = new StackPane();
         stackPane.getChildren().add(group);
         stackPane.getChildren().add(label);
-        Scene scene = new Scene(stackPane, block_size * 20, block_size * 20);
+        Scene scena = new Scene(stackPane, block_size * 20, block_size * 20);
 
         //Movimiento de las serpientes
         
-        scene.setOnKeyPressed(
+        scena.setOnKeyPressed(
                 keyEvent -> {
                     if(!game_over)
                     {
@@ -303,7 +349,7 @@ public class Main extends Application implements Serializable{
                 }
         );
 
-        primaryStage.setScene(scene);
+        primaryStage.setScene(scena);
         primaryStage.show();
     }
 
@@ -352,7 +398,8 @@ public class Main extends Application implements Serializable{
         graphics_context.fillOval(apple.x, apple.y, block_size, block_size);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         launch(args);
     }
 
